@@ -17,8 +17,29 @@ def find_max_rectangle(rectangles):
 
     return max_rectangle
 
+def square_bbox(image, x, y, width, height):
+    max_dim = max(width, height)
+    if image.shape[0] < max_dim:
+        print('Image too narrow to squarize')
+        return x, y, width, height
+    if image.shape[1] < max_dim:
+        print('Image too short to squarize')
+        return x, y, width, height
 
-def get_lungs(image, padding=15):
+    d_width, d_height = max_dim - width, max_dim - height
+    half_dw, half_dh = d_width//2, d_height//2
+    x_n, y_n, width_n, height_n = x - half_dw, y - half_dh, max_dim, max_dim
+    if x_n < 0:
+        x_n = 0
+    if y_n < 0:
+        y_n = 0
+    if x_n + width_n > image.shape[1]:
+        x_n = image.shape[1] - width_n
+    if y_n + height_n > image.shape[0]:
+        y_n = image.shape[0] - height_n
+    return x_n, y_n, width_n, height_n
+
+def get_lungs(image, padding=15, return_image=True, square=False):
     right_lung = hog_finder.find_right_lung_hog(image)
     left_lung = hog_finder.find_left_lung_hog(image)
 
@@ -85,5 +106,12 @@ def get_lungs(image, padding=15):
 
     top_y = min(y_right, y_left)
     bottom_y = max(y_right + height_right, y_left + height_left)
+    x, y, width, height = x_right, top_y, x_left + width_left - x_right, bottom_y - top_y
 
-    return image[top_y:bottom_y, x_right:x_left + width_left]
+    if square:
+        x, y, width, height = square_bbox(image, x, y, width, height)
+
+    if return_image:
+        return image[y:y+height, x:x+width]
+    else:
+        return x, y, width, height
