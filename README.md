@@ -32,7 +32,7 @@ import lungs_finder as lf
 image = cv2.imread(YOUR_PNG_IMAGE_PATH, 0)
 image = cv2.equalizeHist(image)
 image = cv2.medianBlur(image, 3)
-image = cv2.resize(image, (512, 512)) # resize to small scale is crucial
+image = cv2.resize(image, (512, 512)) # resize to small scale is crucial, but 1024 works also okay
 
 # Returns lungs (as is with padding)
 found_lungs = lf.get_lungs(image, padding=20)
