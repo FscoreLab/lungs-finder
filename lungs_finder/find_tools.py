@@ -114,4 +114,4 @@ def get_lungs(image, padding=15, return_image=True, square=False):
     if return_image:
         return image[y:y+height, x:x+width]
     else:
-        return x, y, width, height
+        return (x, y, width, height)
